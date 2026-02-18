@@ -21,11 +21,20 @@ export async function GET(request: NextRequest) {
   const error = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
 
-  console.log('Auth callback received:', { code: !!code, error, errorDescription });
+  // Get the production origin from environment or fallback to request origin
+  const productionOrigin = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
+  
+  console.log('Auth callback received:', { 
+    code: !!code, 
+    error, 
+    errorDescription,
+    requestOrigin: requestUrl.origin,
+    productionOrigin
+  });
 
   if (error) {
     console.error('OAuth error:', error, errorDescription);
-    return NextResponse.redirect(`${requestUrl.origin}/?error=${encodeURIComponent(error || 'Authentication failed')}`);
+    return NextResponse.redirect(`${productionOrigin}/?error=${encodeURIComponent(error || 'Authentication failed')}`);
   }
 
   if (code) {
@@ -39,7 +48,7 @@ export async function GET(request: NextRequest) {
       
       if (error) {
         console.error('Error exchanging code for session:', error);
-        return NextResponse.redirect(`${requestUrl.origin}/?error=${encodeURIComponent('Failed to complete authentication')}`);
+        return NextResponse.redirect(`${productionOrigin}/?error=${encodeURIComponent('Failed to complete authentication')}`);
       }
 
       console.log('Session established successfully:', data.user?.email);
@@ -52,18 +61,18 @@ export async function GET(request: NextRequest) {
       
       // Verify the session was actually established
       if (data.session && data.user) {
-        console.log('Authentication successful, redirecting to home');
-        return NextResponse.redirect(`${requestUrl.origin}/`);
+        console.log('Authentication successful, redirecting to production home');
+        return NextResponse.redirect(`${productionOrigin}/`);
       } else {
         console.error('Session establishment failed - no session or user data');
-        return NextResponse.redirect(`${requestUrl.origin}/?error=${encodeURIComponent('Authentication incomplete')}`);
+        return NextResponse.redirect(`${productionOrigin}/?error=${encodeURIComponent('Authentication incomplete')}`);
       }
     } catch (error) {
       console.error('Auth callback error:', error);
-      return NextResponse.redirect(`${requestUrl.origin}/?error=${encodeURIComponent('Authentication error')}`);
+      return NextResponse.redirect(`${productionOrigin}/?error=${encodeURIComponent('Authentication error')}`);
     }
   }
 
-  // If no code or error, redirect to home
-  return NextResponse.redirect(`${requestUrl.origin}/`);
+  // If no code or error, redirect to production home
+  return NextResponse.redirect(`${productionOrigin}/`);
 }
