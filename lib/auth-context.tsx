@@ -33,21 +33,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email);
       setSession(session);
+      
+      // Handle sign-in event
+      if (event === 'SIGNED_IN' && session) {
+        console.log('User signed in successfully');
+      }
+      
+      // Handle sign-out event
+      if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
+        setSession(null);
+      }
     });
 
     return () => subscription?.unsubscribe();
   }, []);
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) throw error;
+    const redirectUri = `${window.location.origin}/auth/callback`;
+    console.log('Redirect URI being sent:', redirectUri);
+    console.log('Current origin:', window.location.origin);
+    
+    try {
+      const { error, data } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUri,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+      
+      if (error) {
+        console.error('Sign in error:', error);
+        throw error;
+      }
+      
+      console.log('OAuth initiated successfully:', data);
+    } catch (error) {
+      console.error('Failed to initiate OAuth:', error);
+      throw error;
+    }
   };
 
   const signOut = async () => {
