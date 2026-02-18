@@ -20,10 +20,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
     
+    // Handle OAuth callback hash
+    const handleOAuthCallback = async () => {
+      try {
+        if (typeof window === 'undefined') return;
+        
+        const hash = window.location.hash;
+        console.log('Checking for OAuth callback hash:', hash.substring(0, 50) + '...');
+        
+        if (hash.includes('access_token')) {
+          console.log('OAuth callback detected, processing...');
+          
+          // Let Supabase process the hash
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.error('Error processing OAuth callback:', error);
+          } else if (data.session) {
+            console.log('Session established from OAuth callback:', data.session.user?.email);
+            if (mounted) {
+              setSession(data.session);
+              setLoading(false);
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error in OAuth callback handler:', error);
+      }
+    };
+
+    handleOAuthCallback();
+    
     // Check active session
     const getSession = async () => {
       try {
-        // Add a longer delay to ensure Supabase processes the URL hash
+        // Add delay to ensure the session is properly initialized
         await new Promise(resolve => setTimeout(resolve, 500));
         
         if (!mounted) return;
