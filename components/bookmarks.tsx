@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
+import { useTranslation } from '@/lib/language-context';
+import { useSettings } from '@/lib/settings-context';
 import { UserProfileDropdown } from './user-profile-dropdown';
 
 interface Bookmark {
@@ -13,6 +15,8 @@ interface Bookmark {
 
 export function BookmarksComponent() {
   const { session } = useAuth();
+  const { t } = useTranslation();
+  const { settings } = useSettings();
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
@@ -327,14 +331,14 @@ export function BookmarksComponent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-800">Add New Bookmark</h2>
+            <h2 className="text-xl font-bold text-gray-800">{t('bookmarks.addNew')}</h2>
           </div>
           
           <form onSubmit={handleAddBookmark} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Title
+                  {t('bookmarks.title')}
                 </label>
                 <input
                   type="text"
@@ -343,13 +347,13 @@ export function BookmarksComponent() {
                     console.log('Title input changed:', e.target.value);
                     setTitle(e.target.value);
                   }}
-                  placeholder="e.g., GitHub, YouTube, etc."
+                  placeholder={t('bookmarks.titlePlaceholder')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500 transition-all duration-200 bg-white text-black"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  URL
+                  {t('bookmarks.url')}
                 </label>
                 <input
                   type="url"
@@ -358,7 +362,7 @@ export function BookmarksComponent() {
                     console.log('URL input changed:', e.target.value);
                     setUrl(e.target.value);
                   }}
-                  placeholder="https://example.com"
+                  placeholder={t('bookmarks.urlPlaceholder')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500 transition-all duration-200 bg-white text-black"
                 />
               </div>
@@ -381,14 +385,14 @@ export function BookmarksComponent() {
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Adding Bookmark...
+                  {t('bookmarks.adding')}
                 </>
               ) : (
                 <>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  Add Bookmark
+                  {t('bookmarks.addBookmark')}
                 </>
               )}
             </button>
@@ -404,7 +408,7 @@ export function BookmarksComponent() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-800">Your Bookmarks</h2>
+              <h2 className="text-xl font-bold text-gray-800">{t('bookmarks.title')}</h2>
               {/* Sync Status Indicator */}
               <div className="flex items-center gap-1">
                 {syncStatus === 'syncing' && (
@@ -443,8 +447,8 @@ export function BookmarksComponent() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">No bookmarks yet</h3>
-              <p className="text-gray-600">Add your first bookmark to get started organizing your digital world!</p>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">{t('bookmarks.noBookmarks')}</h3>
+              <p className="text-gray-600">{t('bookmarks.noBookmarksDesc')}</p>
             </div>
           ) : (
             <div className="space-y-3">

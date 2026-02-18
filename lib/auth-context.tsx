@@ -18,15 +18,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+    
     // Check active session
     const getSession = async () => {
       try {
+        // Add a small delay to ensure the session is properly initialized
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        if (!mounted) return;
+        
         const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
+        console.log('Initial session check:', session?.user?.email || 'No session');
+        
+        if (mounted) {
+          setSession(session);
+        }
       } catch (error) {
         console.error('Error getting session:', error);
+        if (mounted) {
+          setSession(null);
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -34,12 +50,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
+      console.log('Auth state changed:', event, session?.user?.email || 'No session');
+      
+      if (!mounted) return;
+      
+      // Update session for all events
       setSession(session);
       
       // Handle sign-in event
       if (event === 'SIGNED_IN' && session) {
-        console.log('User signed in successfully');
+        console.log('User signed in successfully:', session.user?.email);
         // Broadcast to other tabs
         localStorage.setItem('auth-event', JSON.stringify({ event: 'SIGNED_IN', timestamp: Date.now() }));
       }
@@ -47,9 +67,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Handle sign-out event
       if (event === 'SIGNED_OUT') {
         console.log('User signed out');
-        setSession(null);
         // Broadcast to other tabs
         localStorage.setItem('auth-event', JSON.stringify({ event: 'SIGNED_OUT', timestamp: Date.now() }));
+      }
+
+      // Handle token refresh
+      if (event === 'TOKEN_REFRESHED') {
+        console.log('Token refreshed');
       }
     });
 
@@ -63,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (authEvent.event === 'SIGNED_OUT') {
             // Force sign out in this tab
             await supabase.auth.signOut();
-            setSession(null);
+            if (mounted) setSession(null);
           } else if (authEvent.event === 'SIGNED_IN') {
             // Refresh session in this tab
             getSession();
@@ -77,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.addEventListener('storage', handleStorageChange);
 
     return () => {
+      mounted = false;
       subscription?.unsubscribe();
       window.removeEventListener('storage', handleStorageChange);
     };
