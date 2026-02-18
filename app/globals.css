@@ -31,12 +31,28 @@ body {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
 }
 
-/* Ensure input fields have visible text */
+/* Ensure input fields have visible text - MAXIMUM SPECIFICITY */
 input, textarea, select {
-  color: #111827 !important;
+  color: #000000 !important;
   background-color: #ffffff !important;
   border: 1px solid #d1d5db !important;
   transition: all 0.2s ease !important;
+}
+
+/* Force white background for all input variants - HIGHEST PRIORITY */
+input[type="text"], input[type="url"], input[type="email"], input[type="password"], textarea {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Additional override for any remaining conflicts */
+input.bg-white, textarea.bg-white, select.bg-white {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+input.text-black, textarea.text-black, select.text-black {
+  color: #000000 !important;
 }
 
 input::placeholder, textarea::placeholder {
@@ -47,17 +63,19 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--primary) !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
   outline: none !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
 }
 
-/* Dark mode support */
+/* Override any dark mode styles completely */
 .dark input, .dark textarea, .dark select {
-  color: #f9fafb !important;
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
 }
 
 .dark input::placeholder, .dark textarea::placeholder {
-  color: #9ca3af !important;
+  color: #6b7280 !important;
 }
 
 /* Custom scrollbar */

@@ -344,7 +344,7 @@ export function BookmarksComponent() {
                     setTitle(e.target.value);
                   }}
                   placeholder="e.g., GitHub, YouTube, etc."
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500 transition-all duration-200 bg-white text-black"
                 />
               </div>
               <div>
@@ -359,7 +359,7 @@ export function BookmarksComponent() {
                     setUrl(e.target.value);
                   }}
                   placeholder="https://example.com"
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500 transition-all duration-200 bg-white text-black"
                 />
               </div>
             </div>

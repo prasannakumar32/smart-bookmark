@@ -184,7 +184,7 @@ export default function ProfilePage() {
                         type="text"
                         value={profile.displayName}
                         onChange={(e) => setProfile(prev => ({ ...prev, displayName: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
                       <p className="text-gray-900 dark:text-white">
@@ -203,7 +203,7 @@ export default function ProfilePage() {
                         value={profile.location}
                         onChange={(e) => setProfile(prev => ({ ...prev, location: e.target.value }))}
                         placeholder="City, Country"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
                       <p className="text-gray-900 dark:text-white">
@@ -223,7 +223,7 @@ export default function ProfilePage() {
                       onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
                       rows={3}
                       placeholder="Tell us about yourself..."
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                     />
                   ) : (
                     <p className="text-gray-900 dark:text-white">
@@ -247,7 +247,7 @@ export default function ProfilePage() {
                         value={profile.website}
                         onChange={(e) => setProfile(prev => ({ ...prev, website: e.target.value }))}
                         placeholder="https://yourwebsite.com"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
                       <p className="text-gray-900 dark:text-white">
@@ -272,7 +272,7 @@ export default function ProfilePage() {
                         value={profile.github}
                         onChange={(e) => setProfile(prev => ({ ...prev, github: e.target.value }))}
                         placeholder="username"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
                       <p className="text-gray-900 dark:text-white">
@@ -297,7 +297,7 @@ export default function ProfilePage() {
                         value={profile.linkedin}
                         onChange={(e) => setProfile(prev => ({ ...prev, linkedin: e.target.value }))}
                         placeholder="username"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
                       <p className="text-gray-900 dark:text-white">
@@ -322,7 +322,7 @@ export default function ProfilePage() {
                         value={profile.twitter}
                         onChange={(e) => setProfile(prev => ({ ...prev, twitter: e.target.value }))}
                         placeholder="@username"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
                       <p className="text-gray-900 dark:text-white">
