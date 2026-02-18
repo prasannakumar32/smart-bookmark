@@ -108,15 +108,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
-    const redirectUri = `${window.location.origin}/auth/callback`;
-    console.log('Redirect URI being sent:', redirectUri);
-    console.log('Current origin:', window.location.origin);
+    console.log('Initiating Google sign in');
     
     try {
       const { error, data } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectUri,
+          // Let Supabase use its default callback endpoint
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
