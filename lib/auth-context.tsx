@@ -23,8 +23,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check active session
     const getSession = async () => {
       try {
-        // Add a small delay to ensure the session is properly initialized
-        await new Promise(resolve => setTimeout(resolve, 200));
+        // Add a longer delay to ensure Supabase processes the URL hash
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         if (!mounted) return;
         
