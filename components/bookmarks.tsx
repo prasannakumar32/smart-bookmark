@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
+import { UserProfileDropdown } from './user-profile-dropdown';
 
 interface Bookmark {
   id: string;
@@ -11,12 +12,13 @@ interface Bookmark {
 }
 
 export function BookmarksComponent() {
-  const { session, signOut } = useAuth();
+  const { session } = useAuth();
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [syncStatus, setSyncStatus] = useState<'synced' | 'syncing' | 'error'>('synced');
   const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; bookmarkId: string; bookmarkTitle: string }>({
     isOpen: false,
     bookmarkId: '',
@@ -40,7 +42,60 @@ export function BookmarksComponent() {
     }
 
     setBookmarks(data || []);
+    
+    // Store in localStorage for cross-tab sync
+    if (data) {
+      localStorage.setItem(`bookmarks_${session.user.id}`, JSON.stringify({
+        data,
+        timestamp: Date.now()
+      }));
+    }
   };
+
+  // Real-time subscription handler
+  const handleRealtimeUpdate = useCallback((payload: any) => {
+    console.log('Real-time update received:', payload);
+    setSyncStatus('syncing');
+    
+    let updatedBookmarks: Bookmark[] = [];
+    
+    if (payload.eventType === 'INSERT') {
+      console.log('Adding bookmark from real-time:', payload.new);
+      updatedBookmarks = [payload.new, ...bookmarks];
+      setBookmarks(updatedBookmarks);
+    } else if (payload.eventType === 'DELETE') {
+      console.log('Removing bookmark from real-time:', payload.old.id);
+      updatedBookmarks = bookmarks.filter((b) => b.id !== payload.old.id);
+      setBookmarks(updatedBookmarks);
+    } else if (payload.eventType === 'UPDATE') {
+      console.log('Updating bookmark from real-time:', payload.new);
+      updatedBookmarks = bookmarks.map((b) => 
+        b.id === payload.new.id ? payload.new : b
+      );
+      setBookmarks(updatedBookmarks);
+    }
+    
+    // Update localStorage for cross-tab sync
+    if (updatedBookmarks.length > 0 || payload.eventType === 'DELETE') {
+      if (session?.user) {
+        localStorage.setItem(`bookmarks_${session.user.id}`, JSON.stringify({
+          data: updatedBookmarks,
+          timestamp: Date.now()
+        }));
+        
+        // Trigger storage event for other tabs
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: `bookmarks_${session.user.id}`,
+          newValue: JSON.stringify({
+            data: updatedBookmarks,
+            timestamp: Date.now()
+          })
+        }));
+      }
+    }
+    
+    setTimeout(() => setSyncStatus('synced'), 1000);
+  }, [bookmarks, session?.user]);
 
   useEffect(() => {
     fetchBookmarks();
@@ -58,21 +113,61 @@ export function BookmarksComponent() {
           table: 'bookmarks',
           filter: `user_id=eq.${session.user.id}`,
         },
-        (payload: any) => {
-          console.log('Real-time update received:', payload);
-          if (payload.eventType === 'INSERT') {
-            console.log('Adding bookmark from real-time:', payload.new);
-            setBookmarks((prev) => [payload.new, ...prev]);
-          } else if (payload.eventType === 'DELETE') {
-            console.log('Removing bookmark from real-time:', payload.old.id);
-            setBookmarks((prev) => prev.filter((b) => b.id !== payload.old.id));
-          }
-        }
+        handleRealtimeUpdate
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Real-time subscription established');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('Real-time subscription error');
+          // Fallback to polling if real-time fails
+          startPolling();
+        }
+      });
+
+    // Fallback polling mechanism
+    const startPolling = () => {
+      const pollInterval = setInterval(() => {
+        fetchBookmarks();
+      }, 5000); // Poll every 5 seconds
+      
+      return () => clearInterval(pollInterval);
+    };
+
+    // Listen for localStorage changes from other tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === `bookmarks_${session.user.id}` && e.newValue) {
+        try {
+          const { data, timestamp } = JSON.parse(e.newValue);
+          // Only update if data is newer than current state
+          if (timestamp > Date.now() - 10000) { // Within 10 seconds
+            setBookmarks(data);
+          }
+        } catch (error) {
+          console.error('Error parsing localStorage data:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Check for initial localStorage data
+    const storedBookmarks = localStorage.getItem(`bookmarks_${session.user.id}`);
+    if (storedBookmarks) {
+      try {
+        const { data, timestamp } = JSON.parse(storedBookmarks);
+        // Use cached data if it's less than 30 seconds old
+        if (Date.now() - timestamp < 30000) {
+          setBookmarks(data);
+        }
+      } catch (error) {
+        console.error('Error parsing stored bookmarks:', error);
+      }
+    }
 
     return () => {
       channel.unsubscribe();
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [session?.user?.id]);
 
@@ -102,7 +197,25 @@ export function BookmarksComponent() {
 
       // Manually add the new bookmark to state for immediate UI update
       if (data && data[0]) {
-        setBookmarks((prev) => [data[0], ...prev]);
+        const newBookmarks = [data[0], ...bookmarks];
+        setBookmarks(newBookmarks);
+        
+        // Update localStorage for cross-tab sync
+        if (session?.user) {
+          localStorage.setItem(`bookmarks_${session.user.id}`, JSON.stringify({
+            data: newBookmarks,
+            timestamp: Date.now()
+          }));
+          
+          // Trigger storage event for other tabs
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: `bookmarks_${session.user.id}`,
+            newValue: JSON.stringify({
+              data: newBookmarks,
+              timestamp: Date.now()
+            })
+          }));
+        }
       }
 
       setTitle('');
@@ -123,7 +236,25 @@ export function BookmarksComponent() {
       if (error) throw error;
       
       // Manually remove from state for immediate UI update
-      setBookmarks((prev) => prev.filter((b) => b.id !== id));
+      const newBookmarks = bookmarks.filter((b) => b.id !== id);
+      setBookmarks(newBookmarks);
+      
+      // Update localStorage for cross-tab sync
+      if (session?.user) {
+        localStorage.setItem(`bookmarks_${session.user.id}`, JSON.stringify({
+          data: newBookmarks,
+          timestamp: Date.now()
+        }));
+        
+        // Trigger storage event for other tabs
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: `bookmarks_${session.user.id}`,
+          newValue: JSON.stringify({
+            data: newBookmarks,
+            timestamp: Date.now()
+          })
+        }));
+      }
     } catch (err) {
       console.error('Error deleting bookmark:', err);
       setError('Failed to delete bookmark');
@@ -153,18 +284,10 @@ export function BookmarksComponent() {
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (err) {
-      console.error('Sign out error:', err);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
       {/* Header */}
-      <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 sticky top-0 z-40">
+      <div className="bg-white/90 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -173,24 +296,16 @@ export function BookmarksComponent() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-bold text-white">Smart Bookmarks</h1>
+              <h1 className="text-2xl font-bold text-gray-800">Smart Bookmarks</h1>
             </div>
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Sign Out
-            </button>
+            <UserProfileDropdown />
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* User Info Card */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 mb-8 animate-fadeIn">
+        <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-gray-200 p-6 mb-8 animate-fadeIn">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,27 +313,27 @@ export function BookmarksComponent() {
               </svg>
             </div>
             <div>
-              <p className="text-sm text-gray-300">Welcome back</p>
-              <p className="text-lg font-semibold text-white">{session?.user?.email}</p>
+              <p className="text-sm text-gray-600">Welcome back</p>
+              <p className="text-lg font-semibold text-gray-800">{session?.user?.email}</p>
             </div>
           </div>
         </div>
 
         {/* Add Bookmark Form */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 mb-8 animate-fadeIn">
+        <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-gray-200 p-8 mb-8 animate-fadeIn">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-white">Add New Bookmark</h2>
+            <h2 className="text-xl font-bold text-gray-800">Add New Bookmark</h2>
           </div>
           
           <form onSubmit={handleAddBookmark} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Title
                 </label>
                 <input
@@ -229,11 +344,11 @@ export function BookmarksComponent() {
                     setTitle(e.target.value);
                   }}
                   placeholder="e.g., GitHub, YouTube, etc."
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-200"
+                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   URL
                 </label>
                 <input
@@ -244,7 +359,7 @@ export function BookmarksComponent() {
                     setUrl(e.target.value);
                   }}
                   placeholder="https://example.com"
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-200"
+                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 transition-all duration-200"
                 />
               </div>
             </div>
@@ -281,42 +396,67 @@ export function BookmarksComponent() {
         </div>
 
         {/* Bookmarks List */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 animate-fadeIn">
+        <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-gray-200 p-8 animate-fadeIn">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-white">Your Bookmarks</h2>
+              <h2 className="text-xl font-bold text-gray-800">Your Bookmarks</h2>
+              {/* Sync Status Indicator */}
+              <div className="flex items-center gap-1">
+                {syncStatus === 'syncing' && (
+                  <div className="flex items-center gap-1 text-blue-500">
+                    <div className="w-3 h-3 border border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-xs text-blue-500">Syncing...</span>
+                  </div>
+                )}
+                {syncStatus === 'synced' && (
+                  <div className="flex items-center gap-1 text-green-500">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-xs text-green-500">Synced</span>
+                  </div>
+                )}
+                {syncStatus === 'error' && (
+                  <div className="flex items-center gap-1 text-red-500">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-xs text-red-500">Sync Error</span>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="bg-white/10 text-gray-300 px-3 py-1 rounded-full text-sm font-medium">
+            <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
               {bookmarks.length} {bookmarks.length === 1 ? 'bookmark' : 'bookmarks'}
             </div>
           </div>
           
           {bookmarks.length === 0 ? (
             <div className="text-center py-16">
-              <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">No bookmarks yet</h3>
-              <p className="text-gray-400">Add your first bookmark to get started organizing your digital world!</p>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">No bookmarks yet</h3>
+              <p className="text-gray-600">Add your first bookmark to get started organizing your digital world!</p>
             </div>
           ) : (
             <div className="space-y-3">
               {bookmarks.map((bookmark, index) => (
                 <div
                   key={bookmark.id}
-                  className="group flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-200 animate-fadeIn"
+                  className="group flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 hover:border-gray-300 transition-all duration-200 animate-fadeIn"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex items-center gap-4 flex-1 min-w-0">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                       </svg>
                     </div>
@@ -325,11 +465,11 @@ export function BookmarksComponent() {
                         href={bookmark.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-white hover:text-blue-400 transition-colors duration-200 block truncate"
+                        className="font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-200 block truncate"
                       >
                         {bookmark.title}
                       </a>
-                      <p className="text-gray-400 text-sm truncate">{bookmark.url}</p>
+                      <p className="text-gray-500 text-sm truncate">{bookmark.url}</p>
                     </div>
                   </div>
                   <button

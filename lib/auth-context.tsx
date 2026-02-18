@@ -40,16 +40,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Handle sign-in event
       if (event === 'SIGNED_IN' && session) {
         console.log('User signed in successfully');
+        // Broadcast to other tabs
+        localStorage.setItem('auth-event', JSON.stringify({ event: 'SIGNED_IN', timestamp: Date.now() }));
       }
       
       // Handle sign-out event
       if (event === 'SIGNED_OUT') {
         console.log('User signed out');
         setSession(null);
+        // Broadcast to other tabs
+        localStorage.setItem('auth-event', JSON.stringify({ event: 'SIGNED_OUT', timestamp: Date.now() }));
       }
     });
 
-    return () => subscription?.unsubscribe();
+    // Listen for storage events from other tabs
+    const handleStorageChange = async (event: StorageEvent) => {
+      if (event.key === 'auth-event') {
+        try {
+          const authEvent = JSON.parse(event.newValue || '{}');
+          console.log('Received auth event from another tab:', authEvent);
+          
+          if (authEvent.event === 'SIGNED_OUT') {
+            // Force sign out in this tab
+            await supabase.auth.signOut();
+            setSession(null);
+          } else if (authEvent.event === 'SIGNED_IN') {
+            // Refresh session in this tab
+            getSession();
+          }
+        } catch (error) {
+          console.error('Error parsing auth event:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      subscription?.unsubscribe();
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const signInWithGoogle = async () => {
