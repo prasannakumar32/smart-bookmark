@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 
 interface Bookmark {
@@ -11,13 +11,6 @@ interface Bookmark {
   user_id: string;
   created_at: string;
 }
-
-// Create Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
 
 export function BookmarksComponent() {
   const { session, signOut } = useAuth();
@@ -29,7 +22,7 @@ export function BookmarksComponent() {
 
   // Fetch bookmarks
   const fetchBookmarks = async () => {
-    if (!session?.user || !supabase) return;
+    if (!session?.user) return;
 
     const { data, error } = await supabase
       .from('bookmarks')
@@ -50,7 +43,7 @@ export function BookmarksComponent() {
     fetchBookmarks();
 
     // Subscribe to real-time changes
-    if (!session?.user || !supabase) return;
+    if (!session?.user) return;
 
     const channel = supabase
       .channel(`bookmarks:${session.user.id}`)
@@ -79,7 +72,7 @@ export function BookmarksComponent() {
 
   const handleAddBookmark = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!session?.user || !supabase) {
+    if (!session?.user) {
       setError('Not logged in');
       return;
     }
@@ -112,8 +105,6 @@ export function BookmarksComponent() {
   };
 
   const handleDeleteBookmark = async (id: string) => {
-    if (!supabase) return;
-    
     setError('');
     try {
       const { error } = await supabase.from('bookmarks').delete().eq('id', id);
