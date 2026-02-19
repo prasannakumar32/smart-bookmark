@@ -43,11 +43,32 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Apply theme
     const applyTheme = () => {
+      console.log('=== THEME APPLICATION START ===');
+      console.log('Current settings.theme:', settings.theme);
+      
       const root = document.documentElement;
+      console.log('Current root classes before:', root.className);
+      
+      // Force remove all theme classes
       root.classList.remove('light', 'dark');
       
-      // Default to light theme
-      root.classList.add('light');
+      // Apply new theme based on settings
+      if (settings.theme === 'dark') {
+        root.classList.add('dark');
+        console.log('Applied: dark class');
+      } else if (settings.theme === 'light') {
+        root.classList.add('light');
+        console.log('Applied: light class');
+      } else {
+        // System theme
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.classList.add(prefersDark ? 'dark' : 'light');
+        console.log('Applied system theme:', prefersDark ? 'dark' : 'light');
+      }
+      
+      console.log('Current root classes after:', root.className);
+      console.log('Body computed style:', getComputedStyle(document.body).background);
+      console.log('==================');
     };
 
     applyTheme();
