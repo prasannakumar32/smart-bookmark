@@ -400,7 +400,7 @@ export function BookmarksComponent() {
         </div>
 
         {/* Bookmarks List */}
-        <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-gray-200 p-8 animate-fadeIn">
+        <div className="bg-white/90 backdrop-blur-lg rounded-2xl border border-gray-200 p-8 animate-fadeIn min-h-[200px]">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -441,7 +441,7 @@ export function BookmarksComponent() {
           </div>
           
           {bookmarks.length === 0 ? (
-            <div className="text-center py-16">
+            <div className="text-center py-16 bg-gradient-to-br from-blue-50/50 to-transparent">
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -491,10 +491,10 @@ export function BookmarksComponent() {
         </div>
       </div>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation Dialog - Moved outside main container */}
       {deleteDialog.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-[100]">
+          <div className="bg-white rounded-lg shadow-2xl p-6 w-full max-w-md mx-4 border border-gray-200">
             <div className="text-center">
               <div className="text-red-600 mb-4">
                 <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
