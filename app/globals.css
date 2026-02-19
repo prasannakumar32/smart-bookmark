@@ -13,16 +13,6 @@
   --warning: #f59e0b;
 }
 
-.dark {
-  --background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  --foreground: #f8fafc;
-}
-
-.light {
-  --background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  --foreground: #0f172a;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -68,16 +58,7 @@ input:focus, textarea:focus, select:focus {
   color: #000000 !important;
 }
 
-/* Override any dark mode styles completely */
-.dark input, .dark textarea, .dark select {
-  color: #000000 !important;
-  background-color: #ffffff !important;
-  border-color: #d1d5db !important;
-}
-
-.dark input::placeholder, .dark textarea::placeholder {
-  color: #6b7280 !important;
-}
+/* Theme-related styles removed */
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {

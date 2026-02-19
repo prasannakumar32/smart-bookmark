@@ -91,18 +91,18 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
+          <p className="mt-2 text-gray-600">
             Manage your professional profile and public information
           </p>
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div className="bg-white shadow rounded-lg overflow-hidden">
           {/* Cover Image */}
           <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600"></div>
           
@@ -111,7 +111,7 @@ export default function ProfilePage() {
             <div className="flex items-end -mt-12 mb-4">
               {/* Avatar */}
               <div className="relative">
-                <div className="w-24 h-24 bg-white dark:bg-gray-800 rounded-full p-1">
+                <div className="w-24 h-24 bg-white rounded-full p-1">
                   <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                     {avatarUrl ? (
                       <img 
@@ -135,10 +135,10 @@ export default function ProfilePage() {
               </div>
               
               <div className="ml-6 flex-1">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-2xl font-bold text-gray-900">
                   {profile.displayName || session.user.email?.split('@')[0]}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">{session.user.email}</p>
+                <p className="text-gray-600">{session.user.email}</p>
               </div>
               
               <div className="mb-4">
@@ -173,10 +173,10 @@ export default function ProfilePage() {
             <div className="space-y-6">
               {/* Basic Info */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Basic Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Display Name
                     </label>
                     {isEditing ? (
@@ -187,14 +187,14 @@ export default function ProfilePage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white">
+                      <p className="text-gray-900">
                         {profile.displayName || 'Not set'}
                       </p>
                     )}
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Location
                     </label>
                     {isEditing ? (
@@ -206,7 +206,7 @@ export default function ProfilePage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white">
+                      <p className="text-gray-900">
                         {profile.location || 'Not set'}
                       </p>
                     )}
@@ -214,7 +214,7 @@ export default function ProfilePage() {
                 </div>
                 
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Bio
                   </label>
                   {isEditing ? (
@@ -226,7 +226,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                     />
                   ) : (
-                    <p className="text-gray-900 dark:text-white">
+                    <p className="text-gray-900">
                       {profile.bio || 'No bio provided'}
                     </p>
                   )}
@@ -235,10 +235,10 @@ export default function ProfilePage() {
 
               {/* Social Links */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Social Links</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Social Links</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Website
                     </label>
                     {isEditing ? (
@@ -250,7 +250,7 @@ export default function ProfilePage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white">
+                      <p className="text-gray-900">
                         {profile.website ? (
                           <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                             {profile.website}
@@ -263,7 +263,7 @@ export default function ProfilePage() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       GitHub
                     </label>
                     {isEditing ? (
@@ -275,7 +275,7 @@ export default function ProfilePage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white">
+                      <p className="text-gray-900">
                         {profile.github ? (
                           <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                             github.com/{profile.github}
@@ -288,7 +288,7 @@ export default function ProfilePage() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       LinkedIn
                     </label>
                     {isEditing ? (
@@ -300,7 +300,7 @@ export default function ProfilePage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white">
+                      <p className="text-gray-900">
                         {profile.linkedin ? (
                           <a href={`https://linkedin.com/in/${profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                             linkedin.com/in/{profile.linkedin}
@@ -313,7 +313,7 @@ export default function ProfilePage() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Twitter
                     </label>
                     {isEditing ? (
@@ -325,7 +325,7 @@ export default function ProfilePage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white">
+                      <p className="text-gray-900">
                         {profile.twitter ? (
                           <a href={`https://twitter.com/${profile.twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                             @{profile.twitter.replace('@', '')}
@@ -341,16 +341,16 @@ export default function ProfilePage() {
 
               {/* Account Info */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Account Information</h3>
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+                <div className="bg-gray-50 rounded-lg p-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Email:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white">{session.user.email}</span>
+                      <span className="font-medium text-gray-700">Email:</span>
+                      <span className="ml-2 text-gray-900">{session.user.email}</span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Member Since:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white">
+                      <span className="font-medium text-gray-700">Member Since:</span>
+                      <span className="ml-2 text-gray-900">
                         {new Date(session.user.created_at || '').toLocaleDateString('en-US', { 
                           month: 'long', 
                           day: 'numeric', 
@@ -359,8 +359,8 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Last Sign In:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white">
+                      <span className="font-medium text-gray-700">Last Sign In:</span>
+                      <span className="ml-2 text-gray-900">
                         {new Date(session.user.last_sign_in_at || '').toLocaleDateString('en-US', { 
                           month: 'long', 
                           day: 'numeric', 
@@ -369,8 +369,8 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Account ID:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white font-mono text-xs">
+                      <span className="font-medium text-gray-700">Account ID:</span>
+                      <span className="ml-2 text-gray-900 font-mono text-xs">
                         {session.user.id.slice(0, 8)}...
                       </span>
                     </div>

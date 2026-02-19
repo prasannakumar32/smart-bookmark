@@ -36,14 +36,14 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
             <button
               onClick={() => router.push('/')}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -51,16 +51,16 @@ export default function SettingsPage() {
               Back to Bookmarks
             </button>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
+          <p className="mt-2 text-gray-600">
             {t('settings.subtitle')}
           </p>
         </div>
 
         {/* Profile Section */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg mb-6">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('settings.profile')}</h2>
+        <div className="bg-white shadow rounded-lg mb-6">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">{t('settings.profile')}</h2>
           </div>
           <div className="p-6">
             <div className="flex items-center space-x-4">
@@ -70,11 +70,11 @@ export default function SettingsPage() {
                 </span>
               </div>
               <div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                <h3 className="text-lg font-medium text-gray-900">
                   {session.user.email?.split('@')[0]}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">{session.user.email}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-500">
+                <p className="text-gray-600">{session.user.email}</p>
+                <p className="text-sm text-gray-500">
                   Member since {new Date(session.user.created_at).toLocaleDateString('en-US', { 
                     month: 'long', 
                     year: 'numeric' 
@@ -86,20 +86,20 @@ export default function SettingsPage() {
         </div>
 
         {/* Preferences */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg mb-6">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('settings.preferences')}</h2>
+        <div className="bg-white shadow rounded-lg mb-6">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">{t('settings.preferences')}</h2>
           </div>
           <div className="p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900 dark:text-white">{t('settings.notifications')}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{t('settings.notificationsDesc')}</p>
+                <h3 className="text-sm font-medium text-gray-900">{t('settings.notifications')}</h3>
+                <p className="text-sm text-gray-500">{t('settings.notificationsDesc')}</p>
               </div>
               <button
                 onClick={() => updateSetting('notifications', !settings.notifications)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  settings.notifications ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                  settings.notifications ? 'bg-blue-600' : 'bg-gray-200'
                 }`}
               >
                 <span
@@ -112,13 +112,13 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900 dark:text-white">{t('settings.autoSave')}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{t('settings.autoSaveDesc')}</p>
+                <h3 className="text-sm font-medium text-gray-900">{t('settings.autoSave')}</h3>
+                <p className="text-sm text-gray-500">{t('settings.autoSaveDesc')}</p>
               </div>
               <button
                 onClick={() => updateSetting('autoSave', !settings.autoSave)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  settings.autoSave ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                  settings.autoSave ? 'bg-blue-600' : 'bg-gray-200'
                 }`}
               >
                 <span
@@ -130,13 +130,13 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t('settings.language')}
               </label>
               <select
                 value={settings.language}
                 onChange={(e) => updateSetting('language', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
               >
                 <option value="en">English</option>
                 <option value="es">Español</option>
@@ -150,15 +150,15 @@ export default function SettingsPage() {
         </div>
 
         {/* Danger Zone */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-red-200 dark:border-red-800">
-            <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">{t('settings.dangerZone')}</h2>
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-6 py-4 border-b border-red-200">
+            <h2 className="text-lg font-semibold text-red-600">{t('settings.dangerZone')}</h2>
           </div>
           <div className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900 dark:text-white">{t('settings.signOut')}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{t('settings.signOutDesc')}</p>
+                <h3 className="text-sm font-medium text-gray-900">{t('settings.signOut')}</h3>
+                <p className="text-sm text-gray-500">{t('settings.signOutDesc')}</p>
               </div>
               <button
                 onClick={handleSignOut}

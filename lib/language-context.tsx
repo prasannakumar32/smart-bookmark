@@ -32,11 +32,6 @@ const translations: Translations = {
     'settings.preferences': 'Preferences',
     'settings.dangerZone': 'Danger Zone',
     
-    'settings.theme': 'Theme',
-    'settings.light': 'Light',
-    'settings.dark': 'Dark',
-    'settings.system': 'System',
-    
     'settings.notifications': 'Email Notifications',
     'settings.notificationsDesc': 'Receive email updates about your bookmarks',
     'settings.autoSave': 'Auto-save',
@@ -134,11 +129,6 @@ const translations: Translations = {
     'settings.appearance': 'Apariencia',
     'settings.preferences': 'Preferencias',
     'settings.dangerZone': 'Zona de peligro',
-    
-    'settings.theme': 'Tema',
-    'settings.light': 'Claro',
-    'settings.dark': 'Oscuro',
-    'settings.system': 'Sistema',
     
     'settings.notifications': 'Notificaciones por correo',
     'settings.notificationsDesc': 'Recibe actualizaciones por correo sobre tus marcadores',
@@ -238,11 +228,6 @@ const translations: Translations = {
     'settings.preferences': 'Préférences',
     'settings.dangerZone': 'Zone de danger',
     
-    'settings.theme': 'Thème',
-    'settings.light': 'Clair',
-    'settings.dark': 'Sombre',
-    'settings.system': 'Système',
-    
     'settings.notifications': 'Notifications par email',
     'settings.notificationsDesc': 'Recevez des mises à jour par email sur vos signets',
     'settings.autoSave': 'Sauvegarde automatique',
@@ -341,11 +326,6 @@ const translations: Translations = {
     'settings.preferences': 'Präferenzen',
     'settings.dangerZone': 'Gefahrenzone',
     
-    'settings.theme': 'Design',
-    'settings.light': 'Hell',
-    'settings.dark': 'Dunkel',
-    'settings.system': 'System',
-    
     'settings.notifications': 'E-Mail-Benachrichtigungen',
     'settings.notificationsDesc': 'Erhalten Sie E-Mail-Updates über Ihre Lesezeichen',
     'settings.autoSave': 'Automatisch speichern',
@@ -421,11 +401,6 @@ const translations: Translations = {
     'settings.preferences': '首选项',
     'settings.dangerZone': '危险区域',
     
-    'settings.theme': '主题',
-    'settings.light': '浅色',
-    'settings.dark': '深色',
-    'settings.system': '系统',
-    
     'settings.notifications': '邮件通知',
     'settings.notificationsDesc': '接收有关您书签的邮件更新',
     'settings.autoSave': '自动保存',
@@ -500,11 +475,6 @@ const translations: Translations = {
     'settings.appearance': '外観',
     'settings.preferences': '設定',
     'settings.dangerZone': '危険ゾーン',
-    
-    'settings.theme': 'テーマ',
-    'settings.light': 'ライト',
-    'settings.dark': 'ダーク',
-    'settings.system': 'システム',
     
     'settings.notifications': 'メール通知',
     'settings.notificationsDesc': 'ブックマークに関するメール更新を受け取る',
