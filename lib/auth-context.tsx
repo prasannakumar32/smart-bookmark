@@ -48,11 +48,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!mounted) return;
       
       setSession(session);
+      
+      // Broadcast auth events to other tabs
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+        localStorage.setItem('auth-event', JSON.stringify({ event, timestamp: Date.now() }));
+      }
     });
+
+    // Listen for storage events from other tabs
+    const handleStorageChange = async (event: StorageEvent) => {
+      if (event.key === 'auth-event' && event.newValue) {
+        try {
+          const authEvent = JSON.parse(event.newValue);
+          
+          if (authEvent.event === 'SIGNED_IN') {
+            // Refresh session in this tab
+            const { data: { session } } = await supabase.auth.getSession();
+            if (mounted) setSession(session);
+          } else if (authEvent.event === 'SIGNED_OUT') {
+            // Sign out in this tab
+            if (mounted) setSession(null);
+          }
+        } catch (error) {
+          // Silent fail for storage events
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
 
     return () => {
       mounted = false;
       subscription?.unsubscribe();
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
