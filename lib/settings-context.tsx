@@ -30,9 +30,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Load settings from localStorage
     const savedSettings = localStorage.getItem('app-settings');
+    console.log('=== LOADING SETTINGS ===');
+    console.log('Saved settings from localStorage:', savedSettings);
+    
     if (savedSettings) {
       try {
         const parsed = JSON.parse(savedSettings);
+        console.log('Parsed settings:', parsed);
         setSettings({ ...defaultSettings, ...parsed });
       } catch (error) {
         console.error('Error parsing settings:', error);
@@ -44,17 +48,28 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     // Apply theme
     const applyTheme = () => {
       const root = document.documentElement;
+      console.log('=== THEME DEBUG ===');
+      console.log('Current settings.theme:', settings.theme);
+      console.log('Current root classes before:', root.className);
+      
       root.classList.remove('light', 'dark');
       
       if (settings.theme === 'dark') {
         root.classList.add('dark');
+        console.log('Applied: dark class');
       } else if (settings.theme === 'light') {
         root.classList.add('light');
+        console.log('Applied: light class');
       } else {
         // System theme
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         root.classList.add(prefersDark ? 'dark' : 'light');
+        console.log('Applied system theme:', prefersDark ? 'dark' : 'light');
       }
+      
+      console.log('Current root classes after:', root.className);
+      console.log('Body computed style:', getComputedStyle(document.body).background);
+      console.log('==================');
     };
 
     applyTheme();
