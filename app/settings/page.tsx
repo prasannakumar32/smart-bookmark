@@ -85,23 +85,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Appearance Settings */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg mb-6">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('settings.appearance')}</h2>
-          </div>
-          <div className="p-6 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {t('settings.theme')}
-              </label>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Theme functionality has been temporarily disabled. The interface now automatically follows your system preference for the best experience.
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Preferences */}
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg mb-6">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
