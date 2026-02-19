@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useSettings } from '@/lib/settings-context';
 import { useTranslation } from '@/lib/language-context';
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
   const { session, signOut } = useAuth();
   const { settings, updateSetting } = useSettings();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSignOut = async () => {
     setIsLoading(true);
@@ -38,6 +40,17 @@ export default function SettingsPage() {
       <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={() => router.push('/')}
+              className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Bookmarks
+            </button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             {t('settings.subtitle')}
