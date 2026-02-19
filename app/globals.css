@@ -27,6 +27,10 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.light body {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
 .dark body {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
 }
