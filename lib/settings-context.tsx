@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 interface Settings {
-  theme: 'light' | 'dark' | 'system';
   notifications: boolean;
   autoSave: boolean;
   language: string;
@@ -16,7 +15,6 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-  theme: 'light',
   notifications: true,
   autoSave: true,
   language: 'en'
@@ -39,42 +37,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       }
     }
   }, []);
-
-  useEffect(() => {
-    // Apply theme
-    const applyTheme = () => {
-      const root = document.documentElement;
-      root.classList.remove('light', 'dark');
-      
-      if (settings.theme === 'dark') {
-        root.classList.add('dark');
-      } else if (settings.theme === 'light') {
-        root.classList.add('light');
-      } else {
-        // System theme
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        root.classList.add(prefersDark ? 'dark' : 'light');
-      }
-    };
-
-    applyTheme();
-    localStorage.setItem('app-settings', JSON.stringify(settings));
-  }, [settings.theme]);
-
-  useEffect(() => {
-    // Listen for system theme changes when theme is 'system'
-    if (settings.theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => {
-        const root = document.documentElement;
-        root.classList.remove('light', 'dark');
-        root.classList.add(mediaQuery.matches ? 'dark' : 'light');
-      };
-
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
-  }, [settings.theme]);
 
   const updateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     setSettings(prev => ({
