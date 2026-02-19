@@ -291,7 +291,7 @@ export function BookmarksComponent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
-      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
+      <div className="bg-white dark:bg-gray-800 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -309,7 +309,7 @@ export function BookmarksComponent() {
 
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* User Info Card */}
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8 animate-fadeIn">
+        <div className="bg-white dark:bg-gray-800 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8 animate-fadeIn">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -324,7 +324,7 @@ export function BookmarksComponent() {
         </div>
 
         {/* Add Bookmark Form */}
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-700 p-8 mb-8 animate-fadeIn">
+        <div className="bg-white dark:bg-gray-800 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-700 p-8 mb-8 animate-fadeIn">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
               <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -400,7 +400,7 @@ export function BookmarksComponent() {
         </div>
 
         {/* Bookmarks List */}
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-700 p-8 animate-fadeIn min-h-[200px]">
+        <div className="bg-white dark:bg-gray-800 backdrop-blur-lg rounded-2xl border border-gray-200 dark:border-gray-700 p-8 animate-fadeIn min-h-[200px]">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">

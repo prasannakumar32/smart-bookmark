@@ -30,13 +30,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Load settings from localStorage
     const savedSettings = localStorage.getItem('app-settings');
-    console.log('=== LOADING SETTINGS ===');
-    console.log('Saved settings from localStorage:', savedSettings);
-    
     if (savedSettings) {
       try {
         const parsed = JSON.parse(savedSettings);
-        console.log('Parsed settings:', parsed);
         setSettings({ ...defaultSettings, ...parsed });
       } catch (error) {
         console.error('Error parsing settings:', error);
