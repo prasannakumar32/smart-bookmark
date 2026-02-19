@@ -238,6 +238,42 @@ smart-bookmark/
 
 **Code Reference**: See `components/bookmarks.tsx` - the `useEffect` hook's return statement.
 
+### Problem 8: Theme Removal and UI Consistency
+
+**Issue**: The application had theme-dependent code scattered throughout components, making it difficult to maintain a consistent light theme appearance.
+
+**Solution**:
+- Removed theme toggle button from bookmarks component header
+- Eliminated all `dark:` Tailwind classes from all components
+- Removed theme property from settings context interface and default settings
+- Cleaned up theme-related CSS variables and dark mode styles from globals.css
+- Removed darkMode configuration from tailwind.config.ts
+- Removed all theme-related translations from language context across all languages
+- Updated profile page with modern, consistent light theme styling
+
+**Code Reference**: 
+- `lib/settings-context.tsx` - Removed theme from Settings interface
+- `components/bookmarks.tsx` - Removed theme toggle and all dark: classes
+- `app/profile/page.tsx` - Complete styling overhaul with modern design
+- `app/globals.css` - Removed .dark class styles and theme variables
+
+### Problem 9: Profile Page Outdated Design
+
+**Issue**: The profile page had basic styling with poor visual hierarchy, inconsistent spacing, and lacked modern UI patterns.
+
+**Solution**:
+- Redesigned header with gradient icon and improved typography
+- Enhanced cover image with overlay and professional label
+- Improved avatar section with larger size, hover effects, and better positioning
+- Modernized form sections with gradient backgrounds and icon headers
+- Updated input styling with better borders, shadows, and focus states
+- Enhanced button designs with gradients, icons, and hover animations
+- Improved responsive design with better mobile layouts
+- Added consistent color scheme (blue → purple → green) for visual hierarchy
+- Implemented better display states for edit vs view modes
+
+**Code Reference**: See `app/profile/page.tsx` - Complete component restructure with modern styling patterns.
+
 ## How Real-Time Updates Work
 
 1. **WebSocket Connection**: Supabase Realtime uses WebSockets to maintain a persistent connection
@@ -260,21 +296,36 @@ This means if you open the app in two tabs and add a bookmark in Tab 1, Tab 2 wi
 ### "Cannot find module '@supabase/supabase-js'"
 - Run `npm install`
 - Make sure you're in the project directory
+- Clear node_modules and package-lock.json if issue persists
 
 ### Bookmarks not loading
 - Check that your Supabase credentials are correct in `.env.local`
 - Verify RLS policies are enabled in the database
-- Check the browser console for errors
+- Check that your Supabase project has Realtime enabled
+- Look for WebSocket errors in the browser's Network tab
 
 ### Real-time updates not working
 - Verify that Realtime is enabled in your Supabase project
 - Check that user_id is correctly set in the subscription filter
 - Look for WebSocket errors in the browser's Network tab
+- Ensure your Supabase project has Realtime enabled
 
 ### Google sign-in not working
 - Verify Google OAuth credentials are correct in Supabase
-- Check that redirect URI matches your deployed URL
-- Ensure the Google+ API is enabled in Google Cloud Console
+- Check that redirect URI matches your deployed URL exactly
+- Ensure Google+ API is enabled in Google Cloud Console
+- Check that your domain is verified in Google Cloud Console
+
+### URL validation issues with custom domains
+- **Issue**: When users add URLs with custom domains, they may not validate properly or display incorrectly
+- **Solution**: 
+  - Added HTML5 `type="url"` validation for basic URL format checking
+  - URLs are stored as-is in the database to preserve user input
+  - Display logic shows URLs as clickable links when valid
+  - Added proper `target="_blank"` and `rel="noopener noreferrer"` for security
+  - For production, consider implementing a URL validation service or library for more robust validation
+
+**Code Reference**: See `components/bookmarks.tsx` - URL input field and link display logic.
 
 ## Future Enhancements
 
