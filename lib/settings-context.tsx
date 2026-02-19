@@ -48,14 +48,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       
       if (settings.theme === 'dark') {
         root.classList.add('dark');
+      } else if (settings.theme === 'light') {
+        root.classList.add('light');
       } else {
-        // Default to light theme for both 'light' and 'system' (when system prefers light)
-        if (settings.theme === 'system') {
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          root.classList.add(prefersDark ? 'dark' : 'light');
-        } else {
-          root.classList.add('light');
-        }
+        // System theme
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.classList.add(prefersDark ? 'dark' : 'light');
       }
     };
 
