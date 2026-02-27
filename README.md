@@ -4,7 +4,7 @@ A simple, real-time bookmark manager built with Next.js, Supabase, and Tailwind 
 
 ## Live Demo
 
-**[Coming soon - Live Vercel URL will be added here after deployment]**
+** Live Vercel URL**
 
 ## Features
 
